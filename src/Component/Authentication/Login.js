@@ -1,26 +1,50 @@
 import { Button, Grid, TextField } from '@mui/material'
 import { Stack } from '@mui/system'
+import axios from 'axios';
 import { Form, FormikProvider, useFormik } from 'formik'
-import React from 'react'
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+
 
 const Login = () => {
+
+  const navigate = useNavigate()
+
+  const loginValidation = Yup.object().shape({
+    email: Yup.string().required('Please Enter Your Emaail'),
+    password: Yup.string().min(6).required('Password is required'),
+  })
+
   const formik = useFormik({
     initialValues: {
       email: '',
       password: '',
 
     },
-    // validationSchema: NewCandidateSchema,
+    validationSchema: loginValidation,
     onSubmit: async (values, { setSubmitting, resetForm, setErrors }) => {
-      console.log('values', values)
+      console.log('values', values);
+      const tempObj = {
+        ...values
+      }
+      try {
+        const response = await axios.post("http://localhost:7000/user/login", tempObj);
+        console.log("response", response);
+        if (response.status === 200) {
+          localStorage.setItem('userInfo', JSON.stringify(response.data));
+          navigate('/chat');
+        }
+      } catch (error) {
+        console.log('error', error)
+      }
     }
   })
 
-  const { errors, values, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   return (
     <div style={{ width: "100%", marginTop: "5px" }}>
-
       <FormikProvider value={formik}>
         <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
           <Grid container spacing={5}  >

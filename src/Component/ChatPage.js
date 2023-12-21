@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
+// import axios from "axios";
+import { Box } from '@mui/material';
+import SideDrawer from './miscellaneous/SideDrawer';
+import MyChats from './MyChats';
+import ChatBox from './ChatBox';
 
 const ChatPage = () => {
-    const [chats, setChats] = useState([]);
-    const fethData = async () => {
-        const result = await axios.get('http://localhost:7000/chat');
-        console.log("result", result);
-        setChats(result.data);
-    }
+    const [user, setUser] = useState(null)
+
     useEffect(() => {
-        fethData();
-    }, [])
+        const login = JSON.parse(localStorage.getItem('userInfo'));
+        setUser(login);
+    }, []);
+    console.log("user", user)
     return (
-        <div>
-            {chats.length > 0 ?
-                chats.map((chat) => (
-                    <div key={chat._id}>{chat.chatName} </div>
-                )) : ''}
+        <div style={{ width: "100%" }}>
+            {user && <SideDrawer />}
+            <Box sx={{ display: 'flex', justifyContent: "space-between", width: '90%', height: "91.5", p: 5 }}>
+                {user && <MyChats />}
+                {user && <ChatBox />}
+            </Box>
+
         </div>
     )
 }
