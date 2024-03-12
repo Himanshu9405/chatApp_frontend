@@ -14,6 +14,7 @@ const Login = () => {
   const loginValidation = Yup.object().shape({
     email: Yup.string().required('Please Enter Your Emaail'),
     password: Yup.string().min(6).required('Password is required'),
+    
   })
 
   const formik = useFormik({
